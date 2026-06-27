@@ -34,4 +34,37 @@ cisco = CiscoStrategy()
 juniper = JuniperStrategy()
 device = Configure_device(juniper)
 
-print(device.executar("show version"))
+print(device.executar("show version")) 
+
+
+
+#how to organize? 
+
+"""network_automation/
+│
+├── main.py
+│
+├── core/
+│   ├── registry.py
+│   ├── factory.py
+│   ├── interfaces.py
+│   └── exceptions.py
+│
+├── strategies/
+│   ├── __init__.py
+│   ├── cisco.py
+│   ├── mikrotik.py
+│   ├── juniper.py
+│   └── arista.py
+│
+├── services/
+│   └── automation_service.py
+│
+├── inventory/
+│   ├── devices.yaml
+│   └── loader.py
+│
+├── tests/
+│
+└── requirements.txt
+"""
