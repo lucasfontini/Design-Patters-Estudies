@@ -1,0 +1,148 @@
+
+
+
+
+
+# class Problem:
+#     def __init__(self):
+#         pass
+
+#     def TwoSum_simple(self, numbers:list, target: int):
+
+#         for i in range(len(numbers)):
+#             for index , j in enumerate(numbers):
+#                 if numbers[index] + numbers[i] == target:
+#                     return [index,i] 
+#         return -1
+
+#     def TwoSum_intermidiate(self, numbers:list, target: int):
+#         
+
+
+# my_numbers = [32,5,3,43,32,56,5,24,56,7,4,3,6,8]
+# problem = Problem()
+# solution1 = problem.TwoSum_simple(my_numbers, 8)  
+# solutio2 = problem.TwoSum_intermidiate(my_numbers, 8)  
+# print(solution1)
+# print(solutio2)
+from abc import ABC, abstractmethod
+class TwoSumStrategy(ABC):
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def execute(self , number:list , target:int):
+        pass
+
+
+class HashMapStrategy(TwoSumStrategy):
+
+    def execute(self, numbers: list, target: int):
+        seen = {}
+
+        for index , value in enumerate(numbers):
+            complement =target - value
+            if complement in seen:
+                return [index, seen[complement]]
+            else:
+                seen[value] = index
+        return -1
+
+class BruteForceStrategy(TwoSumStrategy):
+
+    def execute(self, numbers: list, target: int):
+        for i in range(len(numbers)):
+            for index , j in enumerate(numbers):
+                if numbers[index] + numbers[i] == target:
+                    return [index,i] 
+        return -1
+
+
+class SortedArrayStrategy(TwoSumStrategy):
+
+    def execute(self, numbers, target):
+
+        sorted_numbers = sorted(
+            enumerate(numbers),
+            key=lambda item: item[1]
+        )
+        left = 0
+        right = len(sorted_numbers) - 1
+
+        while left < right:
+
+            # Extraia os valores dos ponteiros
+            left_index , left_value = sorted_numbers[left] 
+            right_index , right_value = sorted_numbers[right] 
+
+            sum_ = left_value + right_value
+            if sum_ == target:
+                return [left_index , right_index]
+
+            elif sum_ > target:
+
+                # Mova o ponteiro direito
+                right -= 1
+
+            else:
+
+                left += 1
+
+        return -1
+
+
+class TwoSumFactory:
+
+    def create_strategy(self, strategy_name):
+
+        strategies = {
+            STRATEGIES.HASHMAP: HashMapStrategy,
+            STRATEGIES.BRUTE_FORCE: BruteForceStrategy,
+            STRATEGIES.SORTED: SortedArrayStrategy
+        }
+
+        strategy_class  = strategies.get(strategy_name)
+
+        if strategy_class is None:
+            raise ValueError(f"Strategy not found: {strategy_name}")
+
+        return strategy_class()
+    
+class TwoSumSolver:
+
+    def __init__(self, strategy):
+        self.strategy = strategy
+
+    def solve(self, numbers, target):
+        return self.strategy.execute(numbers, target)
+    
+    @classmethod
+    def from_strategy(cls, strategy_name):
+
+        factory = TwoSumFactory()
+
+        strategy = factory.create_strategy(strategy_name)
+
+        return cls(strategy)
+
+
+
+    
+    
+
+ 
+
+from enum import Enum 
+
+
+class STRATEGIES(Enum):
+    HASHMAP = "hashmap"
+    BRUTE_FORCE = "bruteforce"
+    SORTED = "sorted"
+
+
+solver = TwoSumSolver.from_strategy(STRATEGIES.HASHMAP)
+
+result = solver.solve([2, 7, 11, 15], 9)
+
+print(result)
